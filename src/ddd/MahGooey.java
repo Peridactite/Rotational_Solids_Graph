@@ -9,12 +9,14 @@ package ddd;
  *
  * @author David
  */
-public class MahGoey extends javax.swing.JFrame {
-
+public class MahGooey extends javax.swing.JFrame {
+    GooeyModel myModel;
+    
     /**
      * Creates new form MahGoey
      */
-    public MahGoey() {
+    public MahGooey() {
+        myModel = new GooeyModel();
         initComponents();
     }
 
@@ -46,6 +48,11 @@ public class MahGoey extends javax.swing.JFrame {
         jLabelyEq.setText("y = ");
 
         jButtonCalculate.setText("Calculate");
+        jButtonCalculate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCalculateActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -85,6 +92,16 @@ public class MahGoey extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFunctionActionPerformed
 
+    private void jButtonCalculateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalculateActionPerformed
+        myModel.setFunction(jTextFunction.getText());
+        System.out.println(jTextFunction.getText());
+        myModel.storeTerms();
+        //ONLY WITH DECIMALS. NO PARENTHESIS. NO BRACKETS. Term: 2x2 is a problem
+        //currently not working with anything less than one. graph innaccurate. 
+        MyGraph graph = new MyGraph();
+        graph.printFunction(myModel.getTerms());
+    }//GEN-LAST:event_jButtonCalculateActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -102,20 +119,21 @@ public class MahGoey extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MahGoey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MahGooey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MahGoey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MahGooey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MahGoey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MahGooey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MahGoey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MahGooey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MahGoey().setVisible(true);
+                new MahGooey().setVisible(true);
             }
         });
     }
