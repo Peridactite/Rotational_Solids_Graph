@@ -14,15 +14,19 @@ import java.util.Scanner;
  */
 public class GooeyModel {
     private String function = ""; //user typed function
-    private ArrayList<Term> terms = new ArrayList<>(); //function is seperated into terms by + - / * 
+    private ArrayList<Term> terms; //function is seperated into terms by + - / * 
     
     public void storeTerms(){
         function = function.trim().replaceAll(" ",""); //remove whitespace
-        String regDelim = "\\+|-|/|\\*"; //seperate terms by + - / * 
+        //      \+|-+(?!\))|^(\(-\))|\/|\*      Here's a fun regex I think will work, but might need negative look behind
+        String regDelim = "\\+|-+(?!\\))|^\\(-\\)]|\\/|\\*"; //seperate terms by + - / * //new
+        //String regDelim = "\\+|-|\\/|\\*"; //seperate terms by + - / *  //old
         Scanner scan = new Scanner(function).useDelimiter(regDelim);
         
+        //terms = null; //clean out old list
+        terms = new ArrayList<>();
         while(scan.hasNext()){
-                terms.add(new Term(scan.next()));
+            terms.add(new Term(scan.next()));
         }
     }
 

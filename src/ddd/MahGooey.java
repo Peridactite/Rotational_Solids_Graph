@@ -94,10 +94,12 @@ public class MahGooey extends javax.swing.JFrame {
 
     private void jButtonCalculateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalculateActionPerformed
         myModel.setFunction(jTextFunction.getText());
-        System.out.println(jTextFunction.getText());
+        System.out.println("Function: " + jTextFunction.getText());
         myModel.storeTerms();
         //ONLY WITH DECIMALS. NO PARENTHESIS. NO BRACKETS. Term: 2x2 is a problem
         //currently not working with anything less than one. graph innaccurate. 
+        //Should check make sure double operators. should make sure people only follow your (-) rule. 
+        //verify 1(-)1 doesn't happen. verify (-1) isn't ruining things
         MyGraph graph = new MyGraph();
         graph.printFunction(myModel.getTerms());
     }//GEN-LAST:event_jButtonCalculateActionPerformed

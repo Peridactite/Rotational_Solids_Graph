@@ -17,7 +17,7 @@ import javax.vecmath.*;
 public class MyGraph {
     public static final float axisSize = 0.025f;
     BranchGroup group;
-    SimpleUniverse universe = new SimpleUniverse();
+    SimpleUniverse universe;
     
     public MyGraph() {
         universe = new SimpleUniverse();
@@ -49,18 +49,21 @@ public class MyGraph {
         float y = 0;
         
         for (float x = -1.0f; x <= 1.0f; x += .001f){
-            int coeff = 0;
+            int coeff = 0;//unused?
             int exp = 0;
 
+                
+                y=0;//might want to remove this...
                 
                 //if(terms.size() == 1){
                 for(int i = 0; i < terms.size(); i++){
                     if(terms.get(i).hasVariable()){
                         Term myTerm = terms.get(i);
-                        y = y + myTerm.getCoeff()*((float)(Math.pow(x, myTerm.getExponent())));
+                        float varPow = (float)(Math.pow(x, myTerm.getExponent())); //x raised to exp
+                        y = y + myTerm.getCoeff()*(varPow);
                     }else{
                         int termNum = Integer.parseInt(terms.get(i).toString());
-                        y = termNum;
+                        y = y + termNum;
                     }
                 }
                 

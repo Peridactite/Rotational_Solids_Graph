@@ -13,8 +13,6 @@ public class myMain {
     public static void main(String[] args) {
         
         System.setProperty("sun.awt.noerasebackground", "true");
-        //Position myPos = new Position();
-        
         MahGooey gui = new MahGooey();
         gui.setVisible(true);
     }
