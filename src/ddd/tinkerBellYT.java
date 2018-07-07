@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import com.sun.j3d.utils.behaviors.vp.*;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 import com.sun.j3d.utils.geometry.ColorCube;
+import java.util.ArrayList;
 
 /**
  * class borrowed from https://www.youtube.com/watch?v=jzSN9_Wsf1Q  fukinotou11d's "How to Rotate 3D Models in Java 3D" tutorial in comments section 
@@ -28,6 +29,11 @@ public class tinkerBellYT extends Applet implements KeyListener {
     private Transform3D t3d = null;
     private Transform3D t3dstep = new Transform3D();
     private Matrix4d matrix = new Matrix4d();
+    
+    ArrayList<Term> terms;//D: here goes nothing
+    public static float xMinView = -5.0f;
+    public static float xMaxView = 5.0f;
+    
     public tinkerBellYT() {
         setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
@@ -40,6 +46,24 @@ public class tinkerBellYT extends Applet implements KeyListener {
         canvas.addKeyListener(this);
         universe.addBranchGraph(scene);
     }
+    
+    
+    //mine.
+    public tinkerBellYT(ArrayList<Term> terms) {
+        this.terms = terms;
+        setLayout(new BorderLayout());
+        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        canvas = new Canvas3D(config);
+        add("Center", canvas);
+        universe = new SimpleUniverse(canvas);
+        BranchGroup scene = createSceneGraph();
+        universe.getViewingPlatform().setNominalViewingTransform();
+        universe.getViewer().getView().setBackClipDistance(100.0);
+        canvas.addKeyListener(this);
+        universe.addBranchGraph(scene);
+    }
+    
+    
     private BranchGroup createSceneGraph() {
         BranchGroup objRoot = new BranchGroup();
         BoundingSphere bounds = new BoundingSphere(new Point3d(), 10000.0);
@@ -54,8 +78,17 @@ public class tinkerBellYT extends Applet implements KeyListener {
         OrbitBehavior orbit = new OrbitBehavior(canvas);
         orbit.setSchedulingBounds(bounds);
         vp.setViewPlatformBehavior(orbit);
-        objRoot.addChild(createColorCube());
-        objRoot.addChild(createBox());
+        //objRoot.addChild(createColorCube());
+        //objRoot.addChild(createBox());
+        
+        //D: I think I can add whatever I want here 
+        objRoot.addChild(MyGraph.xAxis());
+        objRoot.addChild(MyGraph.yAxis());
+        objRoot.addChild(MyGraph.zAxis());
+        objRoot.addChild(printFunction(terms));
+        
+        
+        
         return objRoot;
     }
     // (1) 
@@ -69,7 +102,7 @@ public class tinkerBellYT extends Applet implements KeyListener {
         tg.setTransform(t3d);
         TransformGroup tg_2 = new TransformGroup();
         Transform3D t3d_2 = new Transform3D();
-        t3d_2.setTranslation(new Vector3d(10.0, 0.0, 0.0));
+        t3d_2.setTranslation(new Vector3d(0.0, 0.0, 0.0));//D: this controls the objects origin. originally (10,0,0)
         t3d_2.setScale(1.0);
         tg_2.setTransform(t3d_2);
         tg_2.addChild(new ColorCube());
@@ -199,7 +232,7 @@ public class tinkerBellYT extends Applet implements KeyListener {
     }
     public void keyTyped(KeyEvent e) {
         char key = e.getKeyChar();
-        if (key == 's') {
+        if (key == 'a') {
             t3dstep.rotY(Math.PI / 32);
             tg.getTransform(t3d);
             t3d.get(matrix);
@@ -208,7 +241,7 @@ public class tinkerBellYT extends Applet implements KeyListener {
             t3d.setTranslation(new Vector3d(matrix.m03, matrix.m13, matrix.m23));
             tg.setTransform(t3d);
         }
-        if (key == 'f') {
+        if (key == 'd') {
             t3dstep.rotY(-Math.PI / 32);
             tg.getTransform(t3d);
             t3d.get(matrix);
@@ -220,4 +253,65 @@ public class tinkerBellYT extends Applet implements KeyListener {
     }
     public void keyReleased(KeyEvent e) {}
     public void keyPressed(KeyEvent e) {}
+    
+    
+    
+    BranchGroup printFunction(ArrayList<Term> terms){
+        BranchGroup group = new BranchGroup();
+        float y = 0;
+        
+        for (float x = xMinView; x <= xMaxView; x += .001f){
+            int coeff = 0;//unused?
+            int exp = 0;
+
+                
+            y=0;//might want to remove this...
+
+            //if(terms.size() == 1){
+            for(int i = 0; i < terms.size(); i++){
+                if(terms.get(i).hasVariable()){
+                    Term myTerm = terms.get(i);
+                    float varPow = (float)(Math.pow(x, myTerm.getExponent())); //x raised to exp
+                    y = y + myTerm.getCoeff()*(varPow);
+                }else{
+                    int termNum = Integer.parseInt(terms.get(i).toString());
+                    y = y + termNum;
+                }
+            }
+
+
+//            System.out.println(y);
+//            System.out.println(x);
+            Pixel sphere = new Pixel();
+//                Tried moving this above to bugfix, didn't work too well
+            TransformGroup tg = new TransformGroup();
+            Transform3D transform = new Transform3D();
+            Vector3f vector = new Vector3f( x, y, .0f);
+            transform.setTranslation(vector);
+            tg.setTransform(transform);
+            tg.addChild(sphere.getPixel());
+            group.addChild(tg);
+        }
+        Color3f light1Color = new Color3f(.1f, 1.4f, .1f); // green light
+        BoundingSphere bounds =
+           new BoundingSphere(new Point3d(0.0,0.0,0.0), 100.0);
+        Vector3f light1Direction = new Vector3f(4.0f, -7.0f, -12.0f);
+        DirectionalLight light1
+           = new DirectionalLight(light1Color, light1Direction);
+        light1.setInfluencingBounds(bounds);
+        group.addChild(light1);
+        
+        //hoping this group might let me render graph alone
+        group.addChild(createLight());
+        group.addChild(createLight());
+        group.addChild(createLight());
+        group.compile();
+        
+        
+        return group;
+//        universe.getViewingPlatform().setNominalViewingTransform();
+//
+//        // add the group of objects to the Universe
+//        universe.addBranchGraph(group);
+    }
 }                   

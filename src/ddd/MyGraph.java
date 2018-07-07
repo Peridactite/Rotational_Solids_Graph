@@ -18,6 +18,8 @@ public class MyGraph {
     public static final float axisSize = 0.025f;
     BranchGroup group;
     SimpleUniverse universe;
+    public static float xMinView = -5.0f;
+    public static float xMaxView = 5.0f;
     
     public MyGraph() {
         universe = new SimpleUniverse();
@@ -129,7 +131,7 @@ public class MyGraph {
         yAxis(group);
         zAxis(group);
     }
-
+    
     //public void xAxis(BranchGroup group){
     //    //x axis going 45 made of spheres
     //    for (float x = 0f; x <= .5f; x = x + 0.07f)
@@ -159,7 +161,7 @@ public class MyGraph {
            group.addChild(tg);
         }
     }
-
+    
 
     public void yAxis(BranchGroup group){
         //Y axis made of cones
@@ -191,6 +193,56 @@ public class MyGraph {
             group.addChild(tg);
         }
     }
+    public static BranchGroup xAxis(){
+        //X axis made of spheres
+        BranchGroup group = new BranchGroup();
+        for (float x = xMinView; x <= xMaxView; x = x + 0.1f)
+        {
+            Sphere sphere = new Sphere(axisSize);
+            TransformGroup tg = new TransformGroup();
+            Transform3D transform = new Transform3D();
+            Vector3f vector = new Vector3f( x, .0f, .0f);
+            transform.setTranslation(vector);
+            tg.setTransform(transform);
+            tg.addChild(sphere);
+            group.addChild(tg);
+        }
+        return group;
+    }
 
+    public static BranchGroup yAxis(){
+        //Y axis made of cones
+        BranchGroup group = new BranchGroup();
+        for (float y = xMinView; y <= xMaxView; y = y + 0.1f)
+        {
+           TransformGroup tg = new TransformGroup();
+           Transform3D transform = new Transform3D();
+           Cone cone = new Cone(axisSize, axisSize*2.0f);
+           Vector3f vector = new Vector3f(.0f, y, .0f);
+           transform.setTranslation(vector);
+           tg.setTransform(transform);
+           tg.addChild(cone);
+           group.addChild(tg);
+        }
+        return group;
+    }
+    
+    public static BranchGroup zAxis(){
+        // Z axis made of cylinders
+        BranchGroup group = new BranchGroup();
+        for (float z = -1.0f; z <= 1.0f; z = z+ 0.1f)
+        {
+            float cylAreTooBig = 1.5f;
+            TransformGroup tg = new TransformGroup();
+            Transform3D transform = new Transform3D();
+            Cylinder cylinder = new Cylinder(axisSize/cylAreTooBig, (axisSize*2.0f)/cylAreTooBig);
+            Vector3f vector = new Vector3f(.0f, .0f, z);
+            transform.setTranslation(vector);
+            tg.setTransform(transform);
+            tg.addChild(cylinder);
+            group.addChild(tg);
+        }
+        return group;
+    }
 
 }

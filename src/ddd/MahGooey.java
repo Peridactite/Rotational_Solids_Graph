@@ -5,6 +5,9 @@
  */
 package ddd;
 
+import com.sun.j3d.utils.applet.MainFrame;
+import java.awt.Frame;
+
 /**
  *
  * @author David
@@ -100,8 +103,12 @@ public class MahGooey extends javax.swing.JFrame {
         //currently not working with anything less than one. graph innaccurate. 
         //Should check make sure double operators. should make sure people only follow your (-) rule. 
         //verify 1(-)1 doesn't happen. verify (-1) isn't ruining things
-        MyGraph graph = new MyGraph();
-        graph.printFunction(myModel.getTerms());
+        
+//        //old universe is going out the window now.
+//        MyGraph graph = new MyGraph();
+//        graph.printFunction(myModel.getTerms());
+        tinkerBellYT graph = new tinkerBellYT(myModel.getTerms());
+        Frame frame = new MainFrame(graph, 800, 600);
     }//GEN-LAST:event_jButtonCalculateActionPerformed
 
     /**
