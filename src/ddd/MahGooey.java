@@ -41,7 +41,7 @@ public class MahGooey extends javax.swing.JFrame {
 
         jLabelTitle.setText("ROTATION SOLIDS CALCULATOR");
 
-        jTextFunction.setText("x^2+x+0");
+        jTextFunction.setText("x^2");
         jTextFunction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFunctionActionPerformed(evt);

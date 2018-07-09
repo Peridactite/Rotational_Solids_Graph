@@ -17,6 +17,9 @@ public class Pixel {
     Pixel(){
         pixel = new Box(.005f,.005f,.005f,new Appearance());
     }
+    Pixel(float size){
+        pixel = new Box(size,size,size,new Appearance());
+    }
     public Box getPixel(){
         return pixel;
     }

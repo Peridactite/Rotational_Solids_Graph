@@ -31,8 +31,9 @@ public class tinkerBellYT extends Applet implements KeyListener {
     private Matrix4d matrix = new Matrix4d();
     
     ArrayList<Term> terms;//D: here goes nothing
-    public static float xMinView = -5.0f;
-    public static float xMaxView = 5.0f;
+    public static float xMinView = -1.0f;
+    public static float xMaxView = 1.0f;
+    BranchGroup bigGroup = new BranchGroup();
     
     public tinkerBellYT() {
         setLayout(new BorderLayout());
@@ -61,6 +62,7 @@ public class tinkerBellYT extends Applet implements KeyListener {
         universe.getViewer().getView().setBackClipDistance(100.0);
         canvas.addKeyListener(this);
         universe.addBranchGraph(scene);
+        universe.addBranchGraph(bigGroup);
     }
     
     
@@ -72,20 +74,22 @@ public class tinkerBellYT extends Applet implements KeyListener {
         keyNavBeh.setSchedulingBounds(bounds);
         PlatformGeometry platformGeom = new PlatformGeometry();
         platformGeom.addChild(keyNavBeh);
-        universe.getViewingPlatform().setPlatformGeometry(platformGeom);
+        universe.getViewingPlatform().setPlatformGeometry(platformGeom); //D: arrow direction movement
         // (2) 
         ViewingPlatform vp = universe.getViewingPlatform();
         OrbitBehavior orbit = new OrbitBehavior(canvas);
         orbit.setSchedulingBounds(bounds);
-        vp.setViewPlatformBehavior(orbit);
+        vp.setViewPlatformBehavior(orbit);//D: mouse orbit behavior
+        //D: Removing these to clean up scene
         //objRoot.addChild(createColorCube());
+        createRotationalFunction(terms);
         //objRoot.addChild(createBox());
         
         //D: I think I can add whatever I want here 
         objRoot.addChild(MyGraph.xAxis());
         objRoot.addChild(MyGraph.yAxis());
         objRoot.addChild(MyGraph.zAxis());
-        objRoot.addChild(printFunction(terms));
+        //objRoot.addChild(printFunction(terms));
         
         
         
@@ -97,7 +101,7 @@ public class tinkerBellYT extends Applet implements KeyListener {
         tg = new TransformGroup();
         t3d = new Transform3D();
         tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        t3d.setTranslation(new Vector3d(0.0, -0.4, -0.5));
+        t3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
         t3d.setScale(0.1);
         tg.setTransform(t3d);
         TransformGroup tg_2 = new TransformGroup();
@@ -113,6 +117,104 @@ public class tinkerBellYT extends Applet implements KeyListener {
         objRoot.addChild(createLight());
         objRoot.compile();
         return objRoot;
+    }
+    // (3) 
+    // (1) 
+    //test cube
+    private void createRotationalFunction(ArrayList<Term> terms) {
+        TransformGroup mytg = null;
+        Transform3D myt3d = null;
+        Transform3D myt3dstep = new Transform3D();
+        Matrix4d mymatrix = new Matrix4d();
+        BranchGroup group = new BranchGroup();
+        TransformGroup tg_2 = new TransformGroup();
+        Transform3D t3d_2 = new Transform3D();
+        float y;
+        
+//        
+//        mytg = null;
+//        myt3d = null;
+//        myt3dstep = new Transform3D();
+//        mymatrix = new Matrix4d();
+//        group = new BranchGroup();
+//        mytg = new TransformGroup();
+//        myt3d = new Transform3D();
+//        mytg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+//        myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
+//        myt3d.setScale(0.1);
+//        mytg.setTransform(myt3d);
+//        tg_2 = new TransformGroup();
+//        t3d_2 = new Transform3D();
+//        t3d_2.setTranslation(new Vector3d(0.0, 0.0, 0.0));//D: this controls the objects origin. originally (10,0,0)
+//        t3d_2.setScale(1.0);
+//        tg_2.setTransform(t3d_2);
+//        tg_2.addChild(new ColorCube());
+//        mytg.addChild(tg_2);
+//        group.addChild(mytg);
+//        group.addChild(createLight());
+//        group.addChild(createLight());
+//        group.addChild(createLight());
+//        group.compile();
+//        myt3dstep.rotY(Math.PI / 32);
+//        mytg.getTransform(myt3d);
+//        myt3d.get(mymatrix);
+//        myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
+//        myt3d.mul(myt3dstep);
+//        myt3d.setTranslation(new Vector3d(mymatrix.m03, mymatrix.m13, mymatrix.m23));
+//        mytg.setTransform(myt3d);
+//        //return group;
+//        bigGroup.addChild(group);
+        
+        
+        
+        System.out.println("good luck");
+        //for (float x = xMinView; x <= xMaxView; x += .001f){
+        for(float x =-5; x < 5; x +=.05){
+            y=0;//does this help?
+            for(int i = 0; i < terms.size(); i++){
+                if(terms.get(i).hasVariable()){
+                    Term myTerm = terms.get(i);
+                    float varPow = (float)(Math.pow(x, myTerm.getExponent())); //x raised to exp
+                    y = y + myTerm.getCoeff()*(varPow);
+                }else{
+                    int termNum = Integer.parseInt(terms.get(i).toString());
+                    y = y + termNum;
+                }
+            }
+                mytg = null;
+                myt3d = null;
+                myt3dstep = new Transform3D();
+                mymatrix = new Matrix4d();
+                group = new BranchGroup();
+                mytg = new TransformGroup();
+                myt3d = new Transform3D();
+                mytg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+                myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
+                myt3d.setScale(0.1);
+                mytg.setTransform(myt3d);
+                tg_2 = new TransformGroup();
+                t3d_2 = new Transform3D();
+                t3d_2.setTranslation(new Vector3d(x, y, 0.0));//D: this controls the objects origin. originally (10,0,0)
+                t3d_2.setScale(1.0);
+                tg_2.setTransform(t3d_2);
+                tg_2.addChild(new Pixel(0.1f).getPixel());//D:changing this only...
+                mytg.addChild(tg_2);
+                group.addChild(mytg);
+                group.addChild(createLight());
+                group.addChild(createLight());
+                group.addChild(createLight());
+                group.compile();
+                    //myt3dstep.rotY(Math.PI / 32);
+                    myt3dstep.rotY(Math.PI * i / 10);
+                    mytg.getTransform(myt3d);
+                    myt3d.get(mymatrix);
+                    myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
+                    myt3d.mul(myt3dstep);
+                    myt3d.setTranslation(new Vector3d(mymatrix.m03, mymatrix.m13, mymatrix.m23));
+                    mytg.setTransform(myt3d);
+                //return group;
+                bigGroup.addChild(group);
+        }
     }
     // (3) 
     private BranchGroup createBox() {
@@ -254,12 +356,147 @@ public class tinkerBellYT extends Applet implements KeyListener {
     public void keyReleased(KeyEvent e) {}
     public void keyPressed(KeyEvent e) {}
     
+//    
+//    BranchGroup printFunction(ArrayList<Term> terms){
+//        BranchGroup group = new BranchGroup();
+//        float y = 0;
+//        
+//        for (float x = xMinView; x <= xMaxView; x += .001f){
+//            int coeff = 0;//unused?
+//            int exp = 0;
+//
+//                
+//            y=0;//might want to remove this...
+//
+//            //if(terms.size() == 1){
+//            for(int i = 0; i < terms.size(); i++){
+//                if(terms.get(i).hasVariable()){
+//                    Term myTerm = terms.get(i);
+//                    float varPow = (float)(Math.pow(x, myTerm.getExponent())); //x raised to exp
+//                    y = y + myTerm.getCoeff()*(varPow);
+//                }else{
+//                    int termNum = Integer.parseInt(terms.get(i).toString());
+//                    y = y + termNum;
+//                }
+//            }
+//            Pixel sphere = new Pixel();
+//            TransformGroup tg = new TransformGroup();
+//            Transform3D transform = new Transform3D();
+//            Vector3f vector = new Vector3f( x, y, .0f);
+//            transform.setTranslation(vector);
+//            tg.setTransform(transform);
+//            tg.addChild(sphere.getPixel());
+//            group.addChild(tg);
+//        }
+//        Color3f light1Color = new Color3f(.1f, 1.4f, .1f); // green light
+//        BoundingSphere bounds =
+//           new BoundingSphere(new Point3d(0.0,0.0,0.0), 100.0);
+//        Vector3f light1Direction = new Vector3f(4.0f, -7.0f, -12.0f);
+//        DirectionalLight light1
+//           = new DirectionalLight(light1Color, light1Direction);
+//        light1.setInfluencingBounds(bounds);
+//        group.addChild(light1);
+//        
+//        //hoping this group might let me render graph alone
+//        group.addChild(createLight());
+//        group.addChild(createLight());
+//        group.addChild(createLight());
+//        group.compile();
+//        
+//        
+//        return group;
+//    }
     
     
+//    //trying to rotate this SOB ATTEMPT 1
+//    BranchGroup printFunction(ArrayList<Term> terms){
+//        BranchGroup group = new BranchGroup();
+//        float y = 0;
+//        
+//        for (float x = xMinView; x <= xMaxView; x += .001f){
+//            int coeff = 0;//unused?
+//            int exp = 0;
+//
+//                
+//            y=0;//might want to remove this...
+//
+//            //if(terms.size() == 1){
+//            for(int i = 0; i < terms.size(); i++){
+//                if(terms.get(i).hasVariable()){
+//                    Term myTerm = terms.get(i);
+//                    float varPow = (float)(Math.pow(x, myTerm.getExponent())); //x raised to exp
+//                    y = y + myTerm.getCoeff()*(varPow);
+//                }else{
+//                    int termNum = Integer.parseInt(terms.get(i).toString());
+//                    y = y + termNum;
+//                }
+//            }
+//            //rotatehopefully
+//            BranchGroup objRoot = new BranchGroup();
+//            tg = new TransformGroup();
+//            t3d = new Transform3D();
+//            tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+//            t3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
+//            t3d.setScale(0.1);
+//            tg.setTransform(t3d);
+//            TransformGroup tg_2 = new TransformGroup();
+//            Transform3D t3d_2 = new Transform3D();
+//            t3d_2.setTranslation(new Vector3d( x, y, .0f));//D: this controls the objects origin. originally (10,0,0)
+//            t3d_2.setScale(1.0);
+//            tg_2.setTransform(t3d_2);
+//            tg_2.addChild(new Pixel().getPixel());
+//            tg.addChild(tg_2);
+//            group.addChild(tg);
+//            group.compile();
+//            
+//            
+//            
+//            
+//            
+////            Pixel sphere = new Pixel();
+////            TransformGroup tg = new TransformGroup();
+////            Transform3D transform = new Transform3D();
+////            Vector3f vector = new Vector3f( x, y, .0f);
+////            transform.setTranslation(vector);
+////            tg.setTransform(transform);
+////            tg.addChild(sphere.getPixel());
+////            group.addChild(tg);
+//            //you may want to start over.
+//        }
+//        Color3f light1Color = new Color3f(.1f, 1.4f, .1f); // green light
+//        BoundingSphere bounds =
+//           new BoundingSphere(new Point3d(0.0,0.0,0.0), 100.0);
+//        Vector3f light1Direction = new Vector3f(4.0f, -7.0f, -12.0f);
+//        DirectionalLight light1
+//           = new DirectionalLight(light1Color, light1Direction);
+//        light1.setInfluencingBounds(bounds);
+//        group.addChild(light1);
+//        
+//        //hoping this group might let me render graph alone
+//        group.addChild(createLight());
+//        group.addChild(createLight());
+//        group.addChild(createLight());
+//        group.compile();
+//        
+//        
+//        return group;
+//    }
+      
+    //rotate attempt 2
     BranchGroup printFunction(ArrayList<Term> terms){
+        TransformGroup mytg = new TransformGroup();
+        Transform3D myt3d = new Transform3D();
+        mytg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        Transform3D myt3dstep = new Transform3D();
+        Matrix4d mymatrix = new Matrix4d();
         BranchGroup group = new BranchGroup();
         float y = 0;
         
+        
+        mytg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
+        myt3d.setScale(0.1);
+        mytg.setTransform(myt3d);
         for (float x = xMinView; x <= xMaxView; x += .001f){
             int coeff = 0;//unused?
             int exp = 0;
@@ -277,20 +514,32 @@ public class tinkerBellYT extends Applet implements KeyListener {
                     int termNum = Integer.parseInt(terms.get(i).toString());
                     y = y + termNum;
                 }
+                TransformGroup mytg_2 = new TransformGroup();
+                Transform3D myt3d_2 = new Transform3D();
+                myt3d_2.setTranslation(new Vector3d(x, y, 0.0));//D: this controls the objects origin. originally (10,0,0)
+                myt3d_2.setScale(1.0);
+                mytg_2.setTransform(myt3d_2);
+                mytg_2.addChild(new Pixel(1).getPixel());
+                //mytg.addChild(mytg_2);
+                group.addChild(mytg_2);
             }
-
-
-//            System.out.println(y);
-//            System.out.println(x);
-            Pixel sphere = new Pixel();
-//                Tried moving this above to bugfix, didn't work too well
-            TransformGroup tg = new TransformGroup();
-            Transform3D transform = new Transform3D();
-            Vector3f vector = new Vector3f( x, y, .0f);
-            transform.setTranslation(vector);
-            tg.setTransform(transform);
-            tg.addChild(sphere.getPixel());
-            group.addChild(tg);
+            group.addChild(mytg); //branch changed from objRoot to group //moved out of loop
+//            myt3dstep.rotY(Math.PI / 32);
+//            mytg.getTransform(myt3d);
+//            myt3d.get(mymatrix);
+//            myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
+//            myt3d.mul(myt3dstep);
+//            myt3d.setTranslation(new Vector3d(mymatrix.m03, mymatrix.m13, mymatrix.m23));
+//            mytg.setTransform(myt3d);
+            
+            
+            
+            
+//            objRoot.addChild(createLight());
+//            objRoot.addChild(createLight());
+//            objRoot.addChild(createLight());
+//            objRoot.compile();
+            return group;
         }
         Color3f light1Color = new Color3f(.1f, 1.4f, .1f); // green light
         BoundingSphere bounds =
@@ -309,9 +558,5 @@ public class tinkerBellYT extends Applet implements KeyListener {
         
         
         return group;
-//        universe.getViewingPlatform().setNominalViewingTransform();
-//
-//        // add the group of objects to the Universe
-//        universe.addBranchGraph(group);
     }
 }                   
