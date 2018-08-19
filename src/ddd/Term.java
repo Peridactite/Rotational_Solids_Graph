@@ -27,18 +27,41 @@ public class Term {
         this.term = term;
         term.toLowerCase();
         System.out.println("Term: " + this.term);
-        checkNegative(this);
-        System.out.println("Term: " + this.term);
+        checkNegative();
+        System.out.println("Term after neg: " + this.term);
         hasVariable = (regexChecker("[A-Za-z]", this.term).size() > 0); //if there are letters then this term has variable
         if(hasVariable){
             storeNums();
+            System.out.println("uncomment later and fix");
+//            if(exponent == 0){
+//                coeff = 1;
+//                hasVariable = false;
+//            }
         }
         
-        
+    }
+    
+    public void refreshTerm(){
+        term = "";
+        if(isCoeffNeg){
+            term = term.concat("-");
+        }
+        term = term.concat(String.valueOf(coeff));
+        if(hasVariable){
+            term = term.concat("x");
+        }
+        if(exponent != 0 && exponent != 1){
+            term = term.concat("^" + exponent);
+        }
     }
     
     @Override
     public String toString(){
+        refreshTerm();
+        System.out.println("ceoff9 " + coeff);
+        System.out.println("hasVariable " + hasVariable);
+        System.out.println("exponenet " + exponent);
+
         return term;
     }
     
@@ -101,8 +124,8 @@ public class Term {
         }
     }
     
-    public void checkNegative(Term term){
-        String tempString = term.toString();
+    public void checkNegative(){
+        String tempString = term;
         int temp = 0; //Tracks number of times '-' appears
         // if the exponent is negative, mark term and check if coeff is also negative (2 negative signs) 
         if(tempString.contains("^(-)")){
@@ -165,6 +188,24 @@ public class Term {
             }
         }
         return regList;
+    }
+
+    public Term plus(Term otherTerm) {
+        Term newTerm = this;
+        newTerm.coeff = this.coeff + otherTerm.coeff;
+        return newTerm;
+    }
+    
+    public void multiply(Term otherTerm){
+//        Term newTerm = this;
+//        newTerm.coeff = newTerm.coeff * otherTerm.coeff;
+//        newTerm.exponent = newTerm.exponent + otherTerm.exponent;
+//        return newTerm;
+        System.out.println("COEFF1" + coeff);
+        System.out.println("CEOFF2" + otherTerm.coeff);
+        coeff = coeff * otherTerm.coeff;
+        System.out.println("COEFF3" + coeff);
+        exponent = exponent * otherTerm.exponent;
     }
 
     public boolean hasVariable() {

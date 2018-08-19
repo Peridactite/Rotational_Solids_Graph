@@ -62,6 +62,7 @@ public class tinkerBellYT extends Applet implements KeyListener {
         universe.getViewer().getView().setBackClipDistance(100.0);
         canvas.addKeyListener(this);
         universe.addBranchGraph(scene);
+        createRotationalFunction(terms, 1);
         universe.addBranchGraph(bigGroup);
     }
     
@@ -82,7 +83,7 @@ public class tinkerBellYT extends Applet implements KeyListener {
         vp.setViewPlatformBehavior(orbit);//D: mouse orbit behavior
         //D: Removing these to clean up scene
         //objRoot.addChild(createColorCube());
-        createRotationalFunction(terms);
+        //createRotationalFunction(terms);
         //objRoot.addChild(createBox());
         
         //D: I think I can add whatever I want here 
@@ -91,7 +92,9 @@ public class tinkerBellYT extends Applet implements KeyListener {
         objRoot.addChild(MyGraph.zAxis());
         //objRoot.addChild(printFunction(terms));
         
-        
+        objRoot.addChild(createLight());
+        objRoot.addChild(createLight());
+        objRoot.addChild(createLight());
         
         return objRoot;
     }
@@ -118,10 +121,9 @@ public class tinkerBellYT extends Applet implements KeyListener {
         objRoot.compile();
         return objRoot;
     }
-    // (3) 
-    // (1) 
-    //test cube
-    private void createRotationalFunction(ArrayList<Term> terms) {
+    
+    //optimization attempt
+    private void createRotationalFunction(ArrayList<Term> terms, int angle) {
         TransformGroup mytg = null;
         Transform3D myt3d = null;
         Transform3D myt3dstep = new Transform3D();
@@ -131,89 +133,59 @@ public class tinkerBellYT extends Applet implements KeyListener {
         Transform3D t3d_2 = new Transform3D();
         float y;
         
-//        
-//        mytg = null;
-//        myt3d = null;
-//        myt3dstep = new Transform3D();
-//        mymatrix = new Matrix4d();
-//        group = new BranchGroup();
-//        mytg = new TransformGroup();
-//        myt3d = new Transform3D();
-//        mytg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-//        myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
-//        myt3d.setScale(0.1);
-//        mytg.setTransform(myt3d);
-//        tg_2 = new TransformGroup();
-//        t3d_2 = new Transform3D();
-//        t3d_2.setTranslation(new Vector3d(0.0, 0.0, 0.0));//D: this controls the objects origin. originally (10,0,0)
-//        t3d_2.setScale(1.0);
-//        tg_2.setTransform(t3d_2);
-//        tg_2.addChild(new ColorCube());
-//        mytg.addChild(tg_2);
-//        group.addChild(mytg);
-//        group.addChild(createLight());
-//        group.addChild(createLight());
-//        group.addChild(createLight());
-//        group.compile();
-//        myt3dstep.rotY(Math.PI / 32);
-//        mytg.getTransform(myt3d);
-//        myt3d.get(mymatrix);
-//        myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
-//        myt3d.mul(myt3dstep);
-//        myt3d.setTranslation(new Vector3d(mymatrix.m03, mymatrix.m13, mymatrix.m23));
-//        mytg.setTransform(myt3d);
-//        //return group;
-//        bigGroup.addChild(group);
-        
-        
-        
         System.out.println("good luck");
-        //for (float x = xMinView; x <= xMaxView; x += .001f){
-        for(float x =-5; x < 5; x +=.05){
-            y=0;//does this help?
-            for(int i = 0; i < terms.size(); i++){
-                if(terms.get(i).hasVariable()){
-                    Term myTerm = terms.get(i);
-                    float varPow = (float)(Math.pow(x, myTerm.getExponent())); //x raised to exp
-                    y = y + myTerm.getCoeff()*(varPow);
-                }else{
-                    int termNum = Integer.parseInt(terms.get(i).toString());
-                    y = y + termNum;
+        
+        //TODO: memory low priority - if I lower 48 to 15 then there is something strange going on. I might be making part of the solid TWICE which is BAD.
+        for(int j = 0; j < 24; j++){
+            //for (float x = xMinView; x <= xMaxView; x += .001f){//causing black screen...
+            for(float x =-5; x < 5; x +=.05){
+                y=0;//does this help?
+                for(int i = 0; i < terms.size(); i++){
+                    if(terms.get(i).hasVariable()){
+                        Term myTerm = terms.get(i);
+                        float varPow = (float)(Math.pow(x, myTerm.getExponent())); //x raised to exp
+                        y = y + myTerm.getCoeff()*(varPow);
+                    }else{
+                        int termNum = Integer.parseInt(terms.get(i).toString());
+                        y = y + termNum;
+                    }
                 }
-            }
-                mytg = null;
-                myt3d = null;
-                myt3dstep = new Transform3D();
-                mymatrix = new Matrix4d();
-                group = new BranchGroup();
-                mytg = new TransformGroup();
-                myt3d = new Transform3D();
-                mytg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-                myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
-                myt3d.setScale(0.1);
-                mytg.setTransform(myt3d);
-                tg_2 = new TransformGroup();
-                t3d_2 = new Transform3D();
-                t3d_2.setTranslation(new Vector3d(x, y, 0.0));//D: this controls the objects origin. originally (10,0,0)
-                t3d_2.setScale(1.0);
-                tg_2.setTransform(t3d_2);
-                tg_2.addChild(new Pixel(0.1f).getPixel());//D:changing this only...
-                mytg.addChild(tg_2);
-                group.addChild(mytg);
-                group.addChild(createLight());
-                group.addChild(createLight());
-                group.addChild(createLight());
-                group.compile();
-                    //myt3dstep.rotY(Math.PI / 32);
-                    myt3dstep.rotY(Math.PI * i / 10);
-                    mytg.getTransform(myt3d);
-                    myt3d.get(mymatrix);
+                    mytg = null;
+                    myt3d = null;
+                    myt3dstep = new Transform3D();
+                    //mymatrix = new Matrix4d();
+                    group = new BranchGroup();
+                    mytg = new TransformGroup();
+                    myt3d = new Transform3D();
+                    mytg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
                     myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
-                    myt3d.mul(myt3dstep);
-                    myt3d.setTranslation(new Vector3d(mymatrix.m03, mymatrix.m13, mymatrix.m23));
+                    myt3d.setScale(0.1);
                     mytg.setTransform(myt3d);
-                //return group;
-                bigGroup.addChild(group);
+                    tg_2 = new TransformGroup();
+                    t3d_2 = new Transform3D();
+                    t3d_2.setTranslation(new Vector3d(x, y, 0.0));//D: this controls the objects origin. originally (10,0,0)
+                    t3d_2.setScale(1.0);
+                    tg_2.setTransform(t3d_2);
+                    tg_2.addChild(new Pixel(0.1f).getPixel());//D:changing this only...
+                    mytg.addChild(tg_2);
+                    group.addChild(mytg);
+                    //this is what causes memory issue.
+//                    group.addChild(createLight());
+//                    group.addChild(createLight());
+//                    group.addChild(createLight());
+                    group.compile();
+//                        myt3dstep.rotY(Math.PI * angle/ 4);
+//                        myt3dstep.rotY(Math.PI / 4);
+                        myt3dstep.rotY(Math.PI * j / 24);
+                        mytg.getTransform(myt3d);
+                        myt3d.get(mymatrix);
+                        myt3d.setTranslation(new Vector3d(0.0, 0.0, 0.0));
+                        myt3d.mul(myt3dstep);
+                        myt3d.setTranslation(new Vector3d(mymatrix.m03, mymatrix.m13, mymatrix.m23));
+                        mytg.setTransform(myt3d);
+                    //return group;
+                    bigGroup.addChild(group);
+            }
         }
     }
     // (3) 
@@ -329,7 +301,10 @@ public class tinkerBellYT extends Applet implements KeyListener {
         return light;
     }
     public static void main(String[] args) {
-        tinkerBellYT applet = new tinkerBellYT();
+        ArrayList<Term> termList = new ArrayList<>();
+        termList.add(new Term("x^2"));
+        tinkerBellYT applet = new tinkerBellYT(termList);
+        //tinkerBellYT applet = new tinkerBellYT();
         Frame frame = new MainFrame(applet, 800, 600);
     }
     public void keyTyped(KeyEvent e) {
